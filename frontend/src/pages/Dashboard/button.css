@@ -1,0 +1,18 @@
+/* cor quando passa o mouse por cima */
+.MuiButtonBase-root.buttonHover:hover {
+    background: linear-gradient(135deg, #003bb8 0%, #6b8fe6 100%) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 66, 218, 0.3);
+    transition: all 0.3s ease;
+}
+
+/* cor enquanto não passa o mouse */
+.MuiButtonBase-root.buttonHover {
+    background: linear-gradient(135deg, #0042da 0%, #7d9ee9 100%) !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 66, 218, 0.2);
+}

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Whaticket</title>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" />
+        <link rel="apple-touch-icon" href="%PUBLIC_URL%/apple-touch-icon.png" />
+        <link rel="icon" href="%REACT_APP_BACKEND_URL%/public/logotipos/favicon.ico" />
+        <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+        <meta name="theme-color" content="#0042DA" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta http-equiv="Pragma" content="no-cache" />
+        <meta http-equiv="Expires" content="0" />
+        <style>
+            #splash-screen {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(135deg, #0042da 0%, #7d9ee9 100%);
+                z-index: 9999;
+                overflow: hidden;
+            }
+
+            #splash-content {
+                text-align: center;
+                position: relative;
+                z-index: 2;
+                padding: 40px;
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(20px);
+                border-radius: 20px;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
+                animation: fadeInUp 0.8s ease-out;
+            }
+
+            .spinner {
+                width: 60px;
+                height: 60px;
+                border: 4px solid rgba(255, 255, 255, 0.2);
+                border-top: 4px solid #ffffff;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+                margin: 0 auto 20px;
+            }
+
+            .loading-text {
+                color: #ffffff;
+                font-family: "Open Sans", sans-serif;
+                font-size: 18px;
+                font-weight: 600;
+                margin-bottom: 20px;
+                opacity: 0.9;
+                animation: pulse 2s ease-in-out infinite;
+            }
+
+            @keyframes spin {
+                0% {
+                    transform: rotate(0deg);
+                }
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+
+            @keyframes fadeInUp {
+                0% {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                100% {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @keyframes pulse {
+                0%,
+                100% {
+                    opacity: 0.9;
+                }
+                50% {
+                    opacity: 0.6;
+                }
+            }
+
+            @keyframes dotPulse {
+                0%,
+                80%,
+                100% {
+                    transform: scale(0.8);
+                    opacity: 0.5;
+                }
+                40% {
+                    transform: scale(1);
+                    opacity: 1;
+                }
+            }
+
+            /* Responsive */
+            @media (max-width: 480px) {
+                #splash-content {
+                    padding: 30px 20px;
+                    margin: 20px;
+                }
+
+                .progress-container {
+                    width: 240px;
+                }
+
+                .loading-text {
+                    font-size: 16px;
+                }
+
+                .spinner {
+                    width: 50px;
+                    height: 50px;
+                }
+            }
+
+            .progress-container {
+                width: 280px;
+                height: 6px;
+                background-color: rgba(255, 255, 255, 0.2);
+                border-radius: 3px;
+                margin: 20px auto 0;
+                overflow: hidden;
+                position: relative;
+            }
+
+            .progress-bar {
+                height: 100%;
+                background: #ffffff;
+                width: 0;
+                transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                border-radius: 3px;
+            }
+
+            .dots {
+                display: flex;
+                justify-content: center;
+                margin-top: 15px;
+                gap: 8px;
+            }
+
+            .dot {
+                width: 8px;
+                height: 8px;
+                background-color: rgba(255, 255, 255, 0.6);
+                border-radius: 50%;
+                animation: dotPulse 1.4s ease-in-out infinite;
+            }
+
+            .dot:nth-child(2) {
+                animation-delay: 0.2s;
+            }
+
+            .dot:nth-child(3) {
+                animation-delay: 0.4s;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="splash-screen">
+            <div id="splash-content">
+                <div class="spinner"></div>
+                <div class="loading-text">Carregando...</div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                <div class="dots">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+            </div>
+        </div>
+        <div id="root"></div>
+        <noscript>You need to enable JavaScript to run this app.</noscript>
+
+        <script>
+            let progress = 0;
+            const progressBar = document.getElementById("progress-bar");
+            const loadingTexts = ["Carregando...", "Preparando interface...", "Conectando...", "Quase pronto..."];
+            let textIndex = 0;
+            const loadingTextElement = document.querySelector(".loading-text");
+
+            const interval = setInterval(() => {
+                if (progress < 60) {
+                    progress += 12;
+                } else if (progress < 90) {
+                    progress += 8;
+                } else {
+                    progress += (100 - progress) / 8;
+                }
+
+                progressBar.style.width = progress + "%";
+
+                // Atualizar texto de carregamento
+                if (progress > 25 && textIndex < 1) {
+                    textIndex = 1;
+                    loadingTextElement.textContent = loadingTexts[textIndex];
+                } else if (progress > 50 && textIndex < 2) {
+                    textIndex = 2;
+                    loadingTextElement.textContent = loadingTexts[textIndex];
+                } else if (progress > 80 && textIndex < 3) {
+                    textIndex = 3;
+                    loadingTextElement.textContent = loadingTexts[textIndex];
+                }
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        const splashScreen = document.getElementById("splash-screen");
+                        splashScreen.style.opacity = "0";
+                        splashScreen.style.transform = "scale(1.1)";
+                        splashScreen.style.transition = "all 0.5s ease-out";
+                        setTimeout(() => {
+                            splashScreen.remove();
+                        }, 500);
+                    }, 300);
+                }
+            }, 600);
+
+            window.finishProgress = () => {
+                progress = 100;
+            };
+
+            window.onload = () => {
+                // Optional: Remove splash screen after window is fully loaded
+            };
+        </script>
+    </body>
+</html>
